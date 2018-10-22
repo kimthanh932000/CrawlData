@@ -86,7 +86,7 @@ public class CrawlHelper {
 
                 while (j < content.length() && content.charAt(j) != '>') {
                     tagTmp += content.charAt(j);
-                    j++;
+                    j++;                    
                 }
                 int curEnd = j;
                 tagTmp += '>';
@@ -132,7 +132,7 @@ public class CrawlHelper {
                 newContent += "</" + addTag.get(mark[j]) + ">";
             }
         }
-        return "<root>" + newContent + "</root>";
+        return "<root>" + "\n" + newContent + "</root>";
     }
 //    HASHING
 
@@ -153,7 +153,9 @@ public class CrawlHelper {
                 .replace("&nbsp;&nbsp;", "")
                 .replace("\t", "")
                 .replace("&", "&#38;")
-                .replaceAll("(?m)^\\s", "");
+//                .replace("/>", ">")
+                .replaceAll("(?m)^\\s", "")
+                ;
         return content;
     }
 }

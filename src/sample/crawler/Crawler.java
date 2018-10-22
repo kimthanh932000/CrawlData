@@ -82,7 +82,7 @@ public class Crawler {
             for (Integer p : pos) {
                 num = Integer.parseInt(content.substring(p + key.length(), p + key.length() + 1));
                 pageCount = Math.max(num, pageCount);
-                System.out.println(pageCount);
+//                System.out.println(pageCount);
             }
         }
     }
