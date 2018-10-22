@@ -47,7 +47,8 @@ public class Crawler {
                     count++;
                 }
                 if (inputLine.contains(endSign)) {
-                    isInside = false;
+//                    isInside = false;
+                    break;
                 }
                 if (isInside) {
                     htmlContent = htmlContent + inputLine.trim() + "\n";
@@ -64,22 +65,25 @@ public class Crawler {
     }
 
     public static void updatePageCount(String content) {
-        String key = "Sản phẩm - Trang ";    //keyword contains page count
-        ArrayList<Integer> pos = new ArrayList<>();
-        int num = 0;
-        if (content.contains(key)) {
-            int index = 0;
-            while (index != -1) {
-                index = content.indexOf(key, index);
-                if (index != -1) {
-                    pos.add(index);
-                    index += key.length();
+        if (content.contains("<a title=\"")) {
+            String key = "- Trang ";    //keyword contains page count
+            ArrayList<Integer> pos = new ArrayList<>();
+            int num = 0;
+            if (content.contains(key)) {
+                int index = 0;
+                while (index != -1) {
+                    index = content.indexOf(key, index);
+                    if (index != -1) {
+                        pos.add(index);
+                        index += key.length();
+                    }
                 }
-            }            
-        }
-        for (Integer p : pos) {
-            num = Integer.parseInt(content.substring(p + key.length(), p + key.length() + 1));            
-            pageCount = Math.max(num, pageCount);
+            }
+            for (Integer p : pos) {
+                num = Integer.parseInt(content.substring(p + key.length(), p + key.length() + 1));
+                pageCount = Math.max(num, pageCount);
+                System.out.println(pageCount);
+            }
         }
     }
 
@@ -100,8 +104,6 @@ public class Crawler {
 
             while ((inputLine = br.readLine()) != null) {
 
-                updatePageCount(inputLine);
-
                 if (inputLine.contains(beginSign)) {
                     if (count == 0) {
                         isInside = true;
@@ -109,9 +111,11 @@ public class Crawler {
                     count++;
                 }
                 if (inputLine.contains(endSign)) {
-                    isInside = false;
+//                    isInside = false;
+                    break;  //stop when finish getting needed data block
                 }
                 if (isInside) {
+                    updatePageCount(inputLine);
                     htmlContent = htmlContent + inputLine.trim() + "\n";
                 }
             }

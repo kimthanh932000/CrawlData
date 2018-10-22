@@ -15,8 +15,8 @@ import sample.utils.CrawlHelper;
  */
 public class MainCrawler {
     public static void main(String[] args) throws IOException{
-        String uri = "http://vanphongphamanhhang.com/van-phong-pham/";
-        String beginSign = "id=\"products\"";
+        String uri = "http://vanphongphamanhhang.com/van-phong-pham/But-bi-But-gel-But-de-ban/";
+        String beginSign = "id=\"category\"";
         String endSign = "id=\"msgshow\"";
         
         //get html content
@@ -25,6 +25,6 @@ public class MainCrawler {
         int pageCount = Crawler.pageCount;
         //clean html content
         Crawler.htmlContent = CrawlHelper.cleanHTMLContent(Crawler.htmlContent);
-        
+//        System.out.println(Crawler.htmlContent);
     }
 }
