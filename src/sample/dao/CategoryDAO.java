@@ -23,7 +23,6 @@ public class CategoryDAO implements Serializable {
             throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement stm = null;
-        System.out.println(category.getCategoryName());
         try {
             con = DBUtils.makeConnection();
             if (con != null) {

@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import javax.naming.NamingException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -27,6 +28,7 @@ import javax.xml.transform.stream.StreamSource;
 import sample.dao.CategoryDAO;
 import sample.jaxb.category.Category;
 import sample.jaxb.product.ListProduct;
+import sample.jaxb.product.Product;
 
 /**
  *
@@ -97,6 +99,9 @@ public class StAXParser {
         Iterator<XMLEvent> iterator = autoAddMissingEndtag(reader);
         XMLEvent event = null;
 
+//        while(iterator.hasNext()){
+//            System.out.println(iterator.next());
+//        }
         while (iterator.hasNext()) {
             event = iterator.next();
             if (event.isStartElement()) {
@@ -106,11 +111,13 @@ public class StAXParser {
                     QName attrName = new QName("class");
                     Attribute attr = se.getAttributeByName(attrName);
                     if (attr != null) {
-                        event = iterator.next();
-                        String category = event.asCharacters().getData().trim();
-                        Category cate = new Category();
-                        cate.setCategoryName(category);
-                        return cate;
+                        if (attr.getValue().equals("page_title")) {
+                            event = iterator.next();
+                            String category = event.asCharacters().getData().trim();
+                            Category cate = new Category();
+                            cate.setCategoryName(category);
+                            return cate;
+                        }
                     }
                 }
             }
@@ -119,7 +126,36 @@ public class StAXParser {
     }
 
     //get list of product
-    public static ListProduct parseListProduct(String content) {
+    public static List<Product> parseListProduct(String content)
+            throws XMLStreamException {
+        XMLEventReader reader = getReader(content);
+        Iterator<XMLEvent> iterator = autoAddMissingEndtag(reader);
+        XMLEvent event = null;
+        
+        String productName = "";
+        String description = "";
+        String imgURL = "";
+        double price = 0;
+        int categoryID = 0;
+
+        while (iterator.hasNext()) {
+            event = iterator.next();
+            if (event.isStartElement()) {
+                StartElement se = event.asStartElement();
+                String seQName = se.getName().getLocalPart();
+                if (seQName.equals("a") && (productName == null || productName.isEmpty())) {
+                    Iterator<Attribute> attrIterator = se.getAttributes();
+                    while (attrIterator.hasNext()) {
+                        Attribute attribute = attrIterator.next();
+                        if (attribute.getName().getLocalPart().equals("title")) {  //get product name
+                            productName = attribute.getValue().trim();
+                            System.out.println(productName);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
         return null;
     }
 
