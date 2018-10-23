@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
     <system systemId="file:/F:/CrawlData/src/sample.resource/Product.xsd" uri="xml-resources/jaxb/Category/Product.xsd"/>
-    <system systemId="file:/F:/CrawlData/src/sample.resource/listCategory.xsd" uri="xml-resources/jaxb/Category/listCategory.xsd"/>
-    <system systemId="file:/F:/CrawlData/src/sample.resource/category.xsd" uri="xml-resources/jaxb/Category/category.xsd"/>
-    <system systemId="file:/F:/CrawlData/src/sample.resource/listProduct.xsd" uri="xml-resources/jaxb/Product/listProduct.xsd"/>
-    <system systemId="file:/F:/CrawlData/src/sample.resource/product.xsd" uri="xml-resources/jaxb/Product/product.xsd"/>
+    <system systemId="file:/F:/CrawlData/src/sample.resource/listCategory.xsd" uri="xml-resources/jaxb/category/listCategory.xsd"/>
+    <system systemId="file:/F:/CrawlData/src/sample.resource/category.xsd" uri="xml-resources/jaxb/category/category.xsd"/>
+    <system systemId="file:/F:/CrawlData/src/sample.resource/listProduct.xsd" uri="xml-resources/jaxb/product/listProduct.xsd"/>
+    <system systemId="file:/F:/CrawlData/src/sample.resource/product.xsd" uri="xml-resources/jaxb/product/product.xsd"/>
 </catalog>

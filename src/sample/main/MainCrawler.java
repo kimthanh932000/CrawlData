@@ -6,6 +6,8 @@
 package sample.main;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
 import sample.crawler.Crawler;
 import sample.jaxb.category.Category;
@@ -22,7 +24,7 @@ public class MainCrawler {
         String uri = "http://vanphongphamanhhang.com/van-phong-pham/But-bi-But-gel-But-de-ban/";
         String beginSign = "id=\"category\"";
         String endSign = "id=\"msgshow\"";
-        
+
         String sample = "<div><a><img><h></img></div>";
         //get html content
         Crawler.parseHTML_getPageCount(uri, beginSign, endSign);
@@ -30,8 +32,7 @@ public class MainCrawler {
         int pageCount = Crawler.pageCount;
         //clean html content
         String cleanHTML = CrawlHelper.cleanHTMLContent(Crawler.htmlContent);
-//        String newContent = CrawlHelper.fixString(cleanHTML);
-//        Category cate = StAXParser.parseCategory(newContent);
+
         StAXParser.parseCategory(cleanHTML);
     }
 }

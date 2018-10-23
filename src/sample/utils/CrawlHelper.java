@@ -156,6 +156,7 @@ public class CrawlHelper {
 //                .replace("/>", ">")
                 .replaceAll("(?m)^\\s", "")
                 ;
+        content = "<root>" + "\n" + content + "</root>";
         return content;
     }
 }
