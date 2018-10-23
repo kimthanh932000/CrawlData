@@ -51,6 +51,7 @@ public class Category {
     @XmlSchemaType(name = "positiveInteger")
     protected BigInteger categoryID;
 
+    
     /**
      * Gets the value of the categoryName property.
      * 

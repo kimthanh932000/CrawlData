@@ -17,15 +17,16 @@ import java.sql.SQLException;
 public class DBUtils implements Serializable {
 
     public static Connection makeConnection() {
+        Connection con = null;
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             String url = "jdbc:sqlserver://localhost:1433;databaseName=XMLProject";
-            Connection con = DriverManager.getConnection(url, "sa", "tienthanh93");
+            con = DriverManager.getConnection(url, "sa", "tienthanh93");
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return null;
+        return con;
     }
 }

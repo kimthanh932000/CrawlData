@@ -9,8 +9,10 @@ import com.sun.xml.internal.stream.events.EndElementEvent;
 import com.sun.xml.internal.stream.events.*;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import javax.naming.NamingException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -22,6 +24,7 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.stream.StreamSource;
+import sample.dao.CategoryDAO;
 import sample.jaxb.category.Category;
 import sample.jaxb.product.ListProduct;
 
@@ -38,10 +41,10 @@ public class StAXParser {
             XMLEvent event = null;
             try {
                 event = reader.nextEvent();
-               
+
             } catch (XMLStreamException exception) {
                 String msg = exception.getMessage();
-                System.out.println(msg);
+//                System.out.println(msg);
                 String msgErrorString = "The element type \"";
 
                 if (msg.contains(msgErrorString)) {
@@ -59,7 +62,6 @@ public class StAXParser {
                 }
 
             } catch (NullPointerException exception) {
-                System.out.println("Reach end document");
                 break;
             }
             if (event != null) {
@@ -89,13 +91,28 @@ public class StAXParser {
     }
 
     //get category
-    public static Category parseCategory(String content) throws XMLStreamException {
+    public static Category parseCategory(String content)
+            throws XMLStreamException, SQLException, NamingException {
         XMLEventReader reader = getReader(content);
         Iterator<XMLEvent> iterator = autoAddMissingEndtag(reader);
+        XMLEvent event = null;
+
         while (iterator.hasNext()) {
-            XMLEvent event = iterator.next();
-            if (event != null) {
-                
+            event = iterator.next();
+            if (event.isStartElement()) {
+                StartElement se = event.asStartElement();
+                String seQName = se.getName().getLocalPart();
+                if (seQName.equals("h2")) {
+                    QName attrName = new QName("class");
+                    Attribute attr = se.getAttributeByName(attrName);
+                    if (attr != null) {
+                        event = iterator.next();
+                        String category = event.asCharacters().getData().trim();
+                        Category cate = new Category();
+                        cate.setCategoryName(category);
+                        return cate;
+                    }
+                }
             }
         }
         return null;

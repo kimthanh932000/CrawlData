@@ -6,10 +6,13 @@
 package sample.main;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.xml.stream.XMLStreamException;
 import sample.crawler.Crawler;
+import sample.dao.CategoryDAO;
 import sample.jaxb.category.Category;
 import sample.parser.StAXParser;
 import sample.utils.CrawlHelper;
@@ -20,7 +23,8 @@ import sample.utils.CrawlHelper;
  */
 public class MainCrawler {
 
-    public static void main(String[] args) throws IOException, XMLStreamException {
+    public static void main(String[] args) 
+            throws IOException, XMLStreamException, SQLException, NamingException {
         String uri = "http://vanphongphamanhhang.com/van-phong-pham/But-bi-But-gel-But-de-ban/";
         String beginSign = "id=\"category\"";
         String endSign = "id=\"msgshow\"";
@@ -33,6 +37,10 @@ public class MainCrawler {
         //clean html content
         String cleanHTML = CrawlHelper.cleanHTMLContent(Crawler.htmlContent);
 //        System.out.println(cleanHTML);
-        StAXParser.parseCategory(cleanHTML);
+        Category cate = StAXParser.parseCategory(cleanHTML);
+        if(cate != null){
+            CategoryDAO.addNewCategory(cate);
+        }
+        
     }
 }
