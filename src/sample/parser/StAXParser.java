@@ -38,13 +38,10 @@ public class StAXParser {
             XMLEvent event = null;
             try {
                 event = reader.nextEvent();
-//                if (event != null) {
-//                    if (event.isStartElement()) {
-//                        System.out.println(event);
-//                    }
-//                }
+               
             } catch (XMLStreamException exception) {
                 String msg = exception.getMessage();
+                System.out.println(msg);
                 String msgErrorString = "The element type \"";
 
                 if (msg.contains(msgErrorString)) {
@@ -62,6 +59,7 @@ public class StAXParser {
                 }
 
             } catch (NullPointerException exception) {
+                System.out.println("Reach end document");
                 break;
             }
             if (event != null) {
@@ -76,12 +74,6 @@ public class StAXParser {
                 }
             }
         }
-//        while(IEvents.iterator().hasNext()){
-//            XMLEvent event = IEvents.iterator().next();
-//            if(event.isStartElement()){
-//                System.out.println(event.asStartElement().getName().getLocalPart());
-//            }
-//        }
         return IEvents.iterator();
     }
 
@@ -103,21 +95,7 @@ public class StAXParser {
         while (iterator.hasNext()) {
             XMLEvent event = iterator.next();
             if (event != null) {
-                if (event.isStartElement()) {
-                    StartElement se = event.asStartElement();
-                    if (se.getName().getLocalPart().equals("h2")) {
-                        Iterator<Attribute> attrs = se.getAttributes();
-                        while(attrs.hasNext()){
-                            Attribute attr = attrs.next();
-                            if(attr.getName().getLocalPart().equals("page_title")){
-                                Characters chars = se.asCharacters();
-                                String category = chars.getData().trim();
-                                System.out.println(category);
-                                break;
-                            }
-                        }
-                    }
-                }
+                
             }
         }
         return null;

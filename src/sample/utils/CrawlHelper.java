@@ -153,7 +153,7 @@ public class CrawlHelper {
                 .replace("&nbsp;&nbsp;", "")
                 .replace("\t", "")
                 .replace("&", "&#38;")
-//                .replace("/>", ">")
+                .replace("/>", ">")
                 .replaceAll("(?m)^\\s", "")
                 ;
         content = "<root>" + "\n" + content + "</root>";

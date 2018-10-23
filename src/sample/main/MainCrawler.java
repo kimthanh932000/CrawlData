@@ -32,7 +32,7 @@ public class MainCrawler {
         int pageCount = Crawler.pageCount;
         //clean html content
         String cleanHTML = CrawlHelper.cleanHTMLContent(Crawler.htmlContent);
-
+//        System.out.println(cleanHTML);
         StAXParser.parseCategory(cleanHTML);
     }
 }
