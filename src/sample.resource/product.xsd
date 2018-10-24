@@ -14,10 +14,11 @@ and open the template in the editor.
     <xs:element name="Product">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="ProductName" type="xs:string"/>
-                <xs:element name="Description" type="xs:string"/>
+                <xs:element name="Name" type="xs:string"/>
+                <xs:element name="Code" type="xs:string"/>
                 <xs:element name="Price" type="xs:long"/>
                 <xs:element name="ImageURL" type="xs:string" minOccurs="1"/>
+                <xs:element name="Description" type="xs:string"/>
             </xs:sequence>
             <xs:attribute name="ProductID" type="xs:positiveInteger" use="required"/>
             <xs:attribute name="CategoryID" type="xs:positiveInteger" use="required"/>

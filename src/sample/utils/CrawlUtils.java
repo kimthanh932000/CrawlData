@@ -5,19 +5,22 @@
  */
 package sample.utils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import com.sun.xml.internal.stream.events.EndElementEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.XMLEvent;
 
 /**
  *
  * @author Administrator
  */
-public class CrawlHelper {
+public class CrawlUtils {
 //    LCS
 
     public static int computeMatchingDensity(String a, String b) {
@@ -86,7 +89,7 @@ public class CrawlHelper {
 
                 while (j < content.length() && content.charAt(j) != '>') {
                     tagTmp += content.charAt(j);
-                    j++;                    
+                    j++;
                 }
                 int curEnd = j;
                 tagTmp += '>';
@@ -119,16 +122,16 @@ public class CrawlHelper {
                 i++;
             }
         }
-        while(stack.size() > 0){
+        while (stack.size() > 0) {
             addTag.add(stack.get(stack.size() - 1));
             mark[li.get(li.size() - 1)] = addTag.size() - 1;
             stack.remove(stack.size() - 1);
             li.remove(li.size() - 1);
         }
         String newContent = "";
-        for(int j = 0; j < content.length(); j++){
+        for (int j = 0; j < content.length(); j++) {
             newContent = newContent + content.charAt(j);
-            if(mark[j] != -1){
+            if (mark[j] != -1) {
                 newContent += "</" + addTag.get(mark[j]) + ">";
             }
         }
@@ -139,24 +142,30 @@ public class CrawlHelper {
     public static int hashingString(String content) {
         int mod = 1000000007;
         int base = 30757; //random prime number
-        
+
         int hashValue = 0;
-        for(int i = 0; i < content.length(); i++){
-            hashValue = (int)(((long)hashValue * base + (long)content.charAt(i)) % mod);
+        for (int i = 0; i < content.length(); i++) {
+            hashValue = (int) (((long) hashValue * base + (long) content.charAt(i)) % mod);
         }
         return hashValue;
     }
-    
-    public static String cleanHTMLContent(String content){
+
+    public static String cleanHTMLContent(String content) {
+//        if(content.contains("LANBELLE LAN")){
+//            System.out.println("LANBELLE");
+//        }
         content = content.replace("<br />", "")
+                .replace("itemscope", "")
+                .replace("null", "")
                 .replace("&#38;&nbsp;", "")
                 .replace("&nbsp;&nbsp;", "")
                 .replace("\t", "")
                 .replace("&", "&#38;")
                 .replace("/>", ">")
-                .replaceAll("(?m)^\\s", "")
-                ;
+                .replace("LANBELLE LAN'STAMANU CREAM-kem dưỡng da chiết xuất từ tự nhiên", "")
+                .replaceAll("(?m)^\\s", "");
         content = "<root>" + "\n" + content + "</root>";
         return content;
     }
+
 }

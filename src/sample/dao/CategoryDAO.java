@@ -10,7 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.naming.NamingException;
-import sample.db.DBUtils;
+import sample.utils.DBUtils;
 import sample.jaxb.category.Category;
 
 /**

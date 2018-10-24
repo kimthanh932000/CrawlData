@@ -13,12 +13,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import sample.utils.CrawlUtils;
 
 /**
  *
  * @author Administrator
  */
-public class Crawler {
+public class VPPAHCrawler {
+
     public static String htmlSource = "";
     public static int pageCount = 0;
 
@@ -101,7 +103,7 @@ public class Crawler {
             String inputLine = null;
 
             while ((inputLine = br.readLine()) != null) {
-                getPageCount(inputLine);
+//                getPageCount(inputLine);
 
                 if (inputLine.contains(beginSign)) {
                     if (count == 0) {
@@ -114,7 +116,7 @@ public class Crawler {
                     break;  //stop when finish getting needed data block
                 }
                 if (isInside) {
-//                    getPageCount(inputLine);
+                    getPageCount(inputLine);
                     htmlSource = htmlSource + inputLine.trim() + "\n";
                 }
             }
@@ -127,5 +129,5 @@ public class Crawler {
             }
         }
     }
-      
+        
 }

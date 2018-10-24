@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sample.parser;
+package sample.utils;
 
 import com.sun.xml.internal.stream.events.EndElementEvent;
 import com.sun.xml.internal.stream.events.*;
@@ -17,33 +17,29 @@ import javax.naming.NamingException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.stream.StreamSource;
-import sample.dao.CategoryDAO;
 import sample.jaxb.category.Category;
-import sample.jaxb.product.ListProduct;
 import sample.jaxb.product.Product;
 
 /**
  *
  * @author Administrator
  */
-public class StAXParser {
+public class ParserUtils {
 
-    protected static Iterator<XMLEvent> autoAddMissingEndtag(XMLEventReader reader) {
+    public static Iterator<XMLEvent> fixWellForm(XMLEventReader reader) {
         ArrayList<XMLEvent> IEvents = new ArrayList<>();
         int endTagMarker = 0;
         while (endTagMarker >= 0) {
             XMLEvent event = null;
             try {
                 event = reader.nextEvent();
-
+//                System.out.println(event);
             } catch (XMLStreamException exception) {
                 String msg = exception.getMessage();
 //                System.out.println(msg);
@@ -78,6 +74,9 @@ public class StAXParser {
                 }
             }
         }
+//        while(IEvents.iterator().hasNext()){
+//            System.out.println(IEvents.iterator().next());
+//        }
         return IEvents.iterator();
     }
 
@@ -96,12 +95,9 @@ public class StAXParser {
     public static Category parseCategory(String content)
             throws XMLStreamException, SQLException, NamingException {
         XMLEventReader reader = getReader(content);
-        Iterator<XMLEvent> iterator = autoAddMissingEndtag(reader);
+        Iterator<XMLEvent> iterator = fixWellForm(reader);
         XMLEvent event = null;
 
-//        while(iterator.hasNext()){
-//            System.out.println(iterator.next());
-//        }
         while (iterator.hasNext()) {
             event = iterator.next();
             if (event.isStartElement()) {
@@ -129,7 +125,7 @@ public class StAXParser {
     public static List<Product> parseListProduct(String content)
             throws XMLStreamException {
         XMLEventReader reader = getReader(content);
-        Iterator<XMLEvent> iterator = autoAddMissingEndtag(reader);
+        Iterator<XMLEvent> iterator = fixWellForm(reader);
         XMLEvent event = null;
         
         String productName = "";
@@ -158,5 +154,4 @@ public class StAXParser {
         }
         return null;
     }
-
 }

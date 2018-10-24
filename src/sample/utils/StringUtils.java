@@ -11,7 +11,7 @@ import java.util.HashMap;
  *
  * @author Administrator
  */
-public class StringHelper {
+public class StringUtils {
 
 //    public static String encodeAddress(String address) {
 //  
