@@ -19,6 +19,7 @@ import java.util.ArrayList;
  * @author Administrator
  */
 public class Crawler {
+
     public static String htmlSource = "";
     public static int pageCount = 0;
 
@@ -62,9 +63,7 @@ public class Crawler {
         }
     }
 
-    public static void getPageCount(String content) {
-        if (content.contains("<a title=\"")) {
-            String key = "- Trang ";    //keyword contains page count
+    public static void getPageCount(String content, String key) {
             ArrayList<Integer> pos = new ArrayList<>();
             int num = 0;
             if (content.contains(key)) {
@@ -82,10 +81,9 @@ public class Crawler {
                 pageCount = Math.max(num, pageCount);
 //                System.out.println(pageCount);
             }
-        }
     }
 
-    public static void getHTMLSource_getPageCount(String uri, String beginSign, String endSign)
+    public static void getHTMLSource_getPageCount(String uri, String beginSign, String endSign, String key)
             throws MalformedURLException, IOException {
         htmlSource = "";
         boolean isInside = false;
@@ -101,8 +99,9 @@ public class Crawler {
             String inputLine = null;
 
             while ((inputLine = br.readLine()) != null) {
-                getPageCount(inputLine);
-
+                if (inputLine.contains(key)) {
+                    getPageCount(inputLine, key);
+                }
                 if (inputLine.contains(beginSign)) {
                     if (count == 0) {
                         isInside = true;
@@ -110,11 +109,9 @@ public class Crawler {
                     count++;
                 }
                 if (inputLine.contains(endSign)) {
-//                    isInside = false;
-                    break;  //stop when finish getting needed data block
+                    isInside = false;
                 }
                 if (isInside) {
-//                    getPageCount(inputLine);
                     htmlSource = htmlSource + inputLine.trim() + "\n";
                 }
             }
@@ -127,5 +124,4 @@ public class Crawler {
             }
         }
     }
-      
 }

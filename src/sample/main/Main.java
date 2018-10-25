@@ -5,7 +5,6 @@
  */
 package sample.main;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -18,12 +17,11 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 import sample.crawler.Crawler;
-import sample.crawler.TTTCrawler;
 import sample.crawler.VPPAHCrawler;
 import sample.jaxb.category.Category;
 import sample.jaxb.product.Product;
+import sample.parser.TTTParser;
 import sample.utils.ParserUtils;
-import static sample.parser.TTTParser.getProductLinks;
 import sample.utils.CrawlUtils;
 
 /**
@@ -79,38 +77,45 @@ public class Main {
     }
 
     public static void parseTTT() throws IOException, XMLStreamException, SQLException, NamingException {
-        String tttURL = "https://trungtamthuoc.com/pr/my-pham-i17/";
+        String url = "https://trungtamthuoc.com/pr/my-pham-i17/";
         String beginSign = "class=\"product-breadcroumb\"";
         String endSign = "class=\"phantrang\"";
 
         //get html content
-        Crawler.getHTMLSource_getPageCount(tttURL, beginSign, endSign);
+        Crawler.getHTMLSource_getPageCount(url, beginSign, endSign, "?page=");
 
         //get page count
         int pageCount = Crawler.pageCount;
+        System.out.println("Page count " + pageCount);
 
-        String cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
-//        System.out.println(cleanHTML);
-        Set<String> productLinks = new HashSet<>();
-        productLinks = getProductLinks(cleanHTML);
+        int count = 1;
+//        crawl product details from all pages
+        for (int i = 1; i <= pageCount; i++) {
+            //uri of each page
+            String uri = url + "?page=" + i;
 
-        for (String productLink : productLinks) {
-            System.out.println(productLink);
+            //crawl product page
+            Crawler.getHTMLSource(uri, beginSign, endSign);
+
+            //clean html source
+            String cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
+
+//        get all products urls of a single page
+            Set<String> productLinks = new HashSet<>();
+            productLinks = TTTParser.getProductLinks(cleanHTML);
+
+            if (productLinks != null && productLinks.size() > 0) {
+                for (String productLink : productLinks) {
+                    System.out.println(count + ". " + productLink);
+                    count++;
+                }
+                TTTParser.productURLs = null;   //set productURLs = null each time get enough 40 products url per page
+            }
+
+            //clean html
+//            cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
+//            XMLEventReader reader = ParserUtils.getReader(cleanHTML);
+//            Iterator<XMLEvent> iterator = ParserUtils.fixWellForm(reader);
         }
-
-        //crawl product from all pages
-//        for (int i = 1; i <= pageCount; i++) {
-//
-//            //uri of each page
-//            String uri = tttURL + "page-" + i + "/";
-//
-//            //crawl product page
-//            TTTCrawler.getHTMLSource(uri, beginSign, endSign);
-//            
-//            //clean html
-//            cleanHTML = CrawlUtils.cleanHTMLContent(TTTCrawler.htmlSource);
-//            XMLEventReader reader = StAXParserUtils.getReader(cleanHTML);
-//            Iterator<XMLEvent> iterator = StAXParserUtils.fixWellForm(reader);
-//        }
     }
 }

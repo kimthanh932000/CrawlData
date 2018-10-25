@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<xs:schema version="1.0"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="www.kimthanh.com/schema/product"
+           xmlns="www.kimthanh.com/schema/product"
+           elementFormDefault="qualified">
+    
+    <xs:element name="Product">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Name" type="xs:string"/>
+                <xs:element name="Code" type="xs:string"/>
+                <xs:element name="Price" type="xs:long"/>
+                <xs:element name="ImageURL" type="xs:string" minOccurs="1"/>
+                <xs:element name="Description" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="ProductID" type="xs:positiveInteger" use="required"/>
+            <xs:attribute name="CategoryID" type="xs:positiveInteger" use="required"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
