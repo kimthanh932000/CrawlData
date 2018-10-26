@@ -111,7 +111,7 @@ public class ParserUtils {
                             event = iterator.next();
                             String category = event.asCharacters().getData().trim();
                             Category cate = new Category();
-                            cate.setCategoryName(category);
+                            cate.setName(category);
                             return cate;
                         }
                     }

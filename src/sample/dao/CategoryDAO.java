@@ -28,7 +28,7 @@ public class CategoryDAO implements Serializable {
             if (con != null) {
                 String sql = "Insert into Category(Name) values(?)";
                 stm = con.prepareStatement(sql);
-                stm.setString(1, category.getCategoryName());
+                stm.setString(1, category.getName());
                 int row = stm.executeUpdate();
                 if (row > 0) {
                     return true;

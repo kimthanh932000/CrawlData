@@ -9,18 +9,15 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.naming.NamingException;
-import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.XMLEvent;
 import sample.crawler.Crawler;
 import sample.crawler.VPPAHCrawler;
 import sample.jaxb.category.Category;
 import sample.jaxb.product.Product;
-import sample.parser.TTTParser;
+import sample.parser.TrungTamThuocParser;
 import sample.utils.ParserUtils;
 import sample.utils.CrawlUtils;
 
@@ -32,7 +29,7 @@ public class Main {
 
     public static void main(String[] args)
             throws IOException, XMLStreamException, SQLException, NamingException {
-        parseTTT();
+        parseTrungTamThuoc();
 
     }
 
@@ -76,11 +73,12 @@ public class Main {
         }
     }
 
-    public static void parseTTT() throws IOException, XMLStreamException, SQLException, NamingException {
-        String url = "https://trungtamthuoc.com/pr/my-pham-i17/";
+    public static void parseTrungTamThuoc() throws IOException, XMLStreamException, SQLException, NamingException {
+//        String url = "https://trungtamthuoc.com/pr/my-pham-i17/";     //cannot get product details (don't know why)
+        String url = "https://trungtamthuoc.com/pr/vitamin-va-khoang-chat-i51/";
         String beginSign = "class=\"product-breadcroumb\"";
         String endSign = "class=\"phantrang\"";
-
+        
         //get html content
         Crawler.getHTMLSource_getPageCount(url, beginSign, endSign, "?page=");
 
@@ -102,20 +100,45 @@ public class Main {
 
 //        get all products urls of a single page
             Set<String> productLinks = new HashSet<>();
-            productLinks = TTTParser.getProductLinks(cleanHTML);
+            productLinks = TrungTamThuocParser.getProductLinks(cleanHTML);
+
+            //set productURLs = null when get all products url per page
+            TrungTamThuocParser.productURLs = null;
 
             if (productLinks != null && productLinks.size() > 0) {
+//                for (String productLink : productLinks) {
+//                    System.out.println(count + ". " + productLink);
+//                    count++;
+//                }
+                ArrayList<Product> productList = new ArrayList<>();
+                
                 for (String productLink : productLinks) {
-                    System.out.println(count + ". " + productLink);
-                    count++;
+                    //get a product detail url
+                    String productDetailsUrl = "https://trungtamthuoc.com" + productLink;
+                    
+                    //get html source of the product detail 
+                    Crawler.getHTMLSource(productDetailsUrl, "class=\"product-breadcroumb\"", "class=\"row contentPro\"");
+                    
+                    //clean html content
+                    cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
+                    
+                    //create an instance of Product
+                    Product product = TrungTamThuocParser.getProductDetails(cleanHTML);
+                    
+                    if(product != null){
+                        productList.add(product);   //add product to list
+                        System.out.println(count + ". ");
+                        System.out.println("Name: " + product.getName());
+                        System.out.println("Description: " + product.getDescription());
+                        System.out.println("Code: " + product.getCode());
+                        System.out.println("ImgURL: " + product.getImageURL());
+                        count ++;
+                    }
                 }
-                TTTParser.productURLs = null;   //set productURLs = null each time get enough 40 products url per page
+                System.out.println("Product list size: " + productList.size());
+//                System.out.println("Empty product count: " + TrungTamThuocParser.emptyProductCount);
             }
-
-            //clean html
-//            cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
-//            XMLEventReader reader = ParserUtils.getReader(cleanHTML);
-//            Iterator<XMLEvent> iterator = ParserUtils.fixWellForm(reader);
+            break;
         }
     }
 }

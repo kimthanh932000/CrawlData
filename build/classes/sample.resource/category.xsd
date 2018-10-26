@@ -15,9 +15,9 @@ and open the template in the editor.
     <xs:element name="Category">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="CategoryName" type="xs:string"/>
+                <xs:element name="Name" type="xs:string"/>
             </xs:sequence>
-            <xs:attribute name="CategoryID" type="xs:positiveInteger" use="required"/>
+            <xs:attribute name="ID" type="xs:positiveInteger" use="required"/>
         </xs:complexType>
     </xs:element>
 

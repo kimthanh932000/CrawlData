@@ -46,7 +46,7 @@ public class Crawler {
                     count++;
                 }
                 if (inputLine.contains(endSign)) {
-//                    isInside = false;
+                    isInside = false;
                     break;
                 }
                 if (isInside) {
@@ -64,23 +64,30 @@ public class Crawler {
     }
 
     public static void getPageCount(String content, String key) {
-            ArrayList<Integer> pos = new ArrayList<>();
-            int num = 0;
-            if (content.contains(key)) {
-                int index = 0;
-                while (index != -1) {
-                    index = content.indexOf(key, index);
-                    if (index != -1) {
-                        pos.add(index);
-                        index += key.length();
+        if (content.contains(key)) {
+
+            int beginPage = 0;
+            int endPage = -1;
+            int index = 0;
+
+            while (index != -1) {
+                index = content.indexOf(key, index);
+                if (index != -1) {
+                    beginPage = index + key.length();
+                    for (int i = beginPage; i < content.length(); i++) {
+                        if (content.charAt(i) == '\'' || content.charAt(i) == '"') {
+                            endPage = i;
+                            break;
+                        }
                     }
+                    if (endPage != -1) {
+                        int num = Integer.parseInt(content.substring(beginPage, endPage));
+                        pageCount = Math.max(num, pageCount);
+                    }
+                    index += key.length();
                 }
             }
-            for (Integer p : pos) {
-                num = Integer.parseInt(content.substring(p + key.length(), p + key.length() + 1));
-                pageCount = Math.max(num, pageCount);
-//                System.out.println(pageCount);
-            }
+        }
     }
 
     public static void getHTMLSource_getPageCount(String uri, String beginSign, String endSign, String key)
