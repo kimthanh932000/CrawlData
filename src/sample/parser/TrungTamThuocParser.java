@@ -35,6 +35,8 @@ public class TrungTamThuocParser {
         Iterator<XMLEvent> iterator = ParserUtils.fixWellForm(reader);
 
         Category category = null;
+        int count = 0;
+
         while (iterator.hasNext()) {
 
             event = iterator.next();
@@ -43,8 +45,35 @@ public class TrungTamThuocParser {
                 StartElement se = event.asStartElement();
                 String seQName = se.getName().getLocalPart();
 
-                if (seQName.equals("span")) {
+                if (seQName.equals("a")) {
+                    Iterator<Attribute> attributes = se.getAttributes();
+                    Attribute attr = null;
 
+                    while (attributes.hasNext()) {
+                        attr = attributes.next();
+                        String name = attr.getName().getLocalPart().trim();
+                        String value = attr.getValue().trim();
+
+                        if (name.equals("href") && value.equals("/pr/my-pham-i17/")) {
+                            count++;
+                            if (count == 2) {
+                                event = iterator.next();
+                                event = iterator.next();
+                                event = iterator.next();
+                                if (event.isStartElement()) {
+                                    se = event.asStartElement();
+                                    seQName = se.getName().getLocalPart();
+
+                                    if (seQName.equals("span")) {
+                                        event = iterator.next();
+                                        category = new Category();
+                                        category.setName(event.asCharacters().getData().trim());
+                                        System.out.println(category.getName());
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -173,7 +202,7 @@ public class TrungTamThuocParser {
                     }
                     break;
                 }
-            }            
+            }
         }
 
         Product product = null;

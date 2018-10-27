@@ -8,6 +8,7 @@ package sample.dao;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.naming.NamingException;
 import sample.utils.DBUtils;
@@ -43,5 +44,32 @@ public class CategoryDAO implements Serializable {
             }
         }
         return false;
+    }
+
+    public static int getCategoryID(Category category, String categoryName)
+            throws SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement stm = null;
+        int categoryID = 0;
+
+        try {
+            con = DBUtils.makeConnection();
+            if (con != null) {
+                String sql = "Select ID from Category where Name like '%" + categoryName + "'%";
+                stm = con.prepareStatement(sql);
+                ResultSet rs = stm.executeQuery();
+                if (rs.next()) {
+                    categoryID = rs.getInt("ID");
+                }
+            }
+        } finally {
+            if (stm != null) {
+                stm.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+        return categoryID;
     }
 }

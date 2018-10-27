@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.naming.NamingException;
+import sample.jaxb.product.Product;
 import sample.utils.DBUtils;
 
 /**
@@ -16,7 +17,8 @@ import sample.utils.DBUtils;
  * @author Administrator
  */
 public class ProductDAO {
-    public boolean addNewProduct(String name, String code, String description, double price, String imageURL, int cateID) 
+    
+    public static boolean addNewProduct(Product product, int cateID) 
             throws SQLException, NamingException{
         Connection con = null;
         PreparedStatement stm = null;
@@ -27,11 +29,11 @@ public class ProductDAO {
                 String sql = "Insert into Product(Name, Code, Description, Price, ImageURL, CategoryID) "
                         + "values(?,?,?,?,?,?)";
                 stm = con.prepareStatement(sql);
-                stm.setString(1, name);
-                stm.setString(2, code);
-                stm.setString(3, description);
-                stm.setDouble(4, price);
-                stm.setString(5, imageURL);
+                stm.setString(1, product.getName());
+                stm.setString(2, product.getCode());
+                stm.setString(3, product.getDescription());
+                stm.setDouble(4, product.getPrice());
+                stm.setString(5, product.getImageURL());
                 stm.setInt(6, cateID);
                 
                 int row = stm.executeUpdate();
