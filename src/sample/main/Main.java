@@ -29,7 +29,7 @@ public class Main {
 
     public static void main(String[] args)
             throws IOException, XMLStreamException, SQLException, NamingException {
-        parseTrungTamThuoc();
+        crawlTrungTamThuoc();
 
     }
 
@@ -73,9 +73,9 @@ public class Main {
         }
     }
 
-    public static void parseTrungTamThuoc() throws IOException, XMLStreamException, SQLException, NamingException {
-//        String url = "https://trungtamthuoc.com/pr/my-pham-i17/";     //cannot get product details (don't know why)
-        String url = "https://trungtamthuoc.com/pr/vitamin-va-khoang-chat-i51/";
+    public static void crawlTrungTamThuoc() throws IOException, XMLStreamException, SQLException, NamingException {
+        String url = "https://trungtamthuoc.com/pr/my-pham-i17/";     //loss of some products while crawling
+        //String url = "https://trungtamthuoc.com/pr/vitamin-va-khoang-chat-i51/";  //loss of some products while crawling
         String beginSign = "class=\"product-breadcroumb\"";
         String endSign = "class=\"phantrang\"";
         
@@ -84,10 +84,13 @@ public class Main {
 
         //get page count
         int pageCount = Crawler.pageCount;
-        System.out.println("Page count " + pageCount);
-
-        int count = 1;
-//        crawl product details from all pages
+        System.out.println("Page count " + pageCount);       
+        
+        Category category = new Category();
+        category.setName("Mỹ Phẩm");
+        
+        int count = 1;  //count product per category
+        //crawl product details from all pages
         for (int i = 1; i <= pageCount; i++) {
             //uri of each page
             String uri = url + "?page=" + i;
@@ -98,14 +101,11 @@ public class Main {
             //clean html source
             String cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
 
-//        get all products urls of a single page
+        //get all products urls of a single page
             Set<String> productLinks = new HashSet<>();
             productLinks = TrungTamThuocParser.getProductLinks(cleanHTML);
 
-            //set productURLs = null when get all products url per page
-            TrungTamThuocParser.productURLs = null;
-
-            if (productLinks != null && productLinks.size() > 0) {
+            if (productLinks.size() > 0) {
 //                for (String productLink : productLinks) {
 //                    System.out.println(count + ". " + productLink);
 //                    count++;
@@ -129,16 +129,14 @@ public class Main {
                         productList.add(product);   //add product to list
                         System.out.println(count + ". ");
                         System.out.println("Name: " + product.getName());
+                        System.out.println("Price: " + product.getPrice());
                         System.out.println("Description: " + product.getDescription());
                         System.out.println("Code: " + product.getCode());
                         System.out.println("ImgURL: " + product.getImageURL());
                         count ++;
                     }
                 }
-                System.out.println("Product list size: " + productList.size());
-//                System.out.println("Empty product count: " + TrungTamThuocParser.emptyProductCount);
             }
-            break;
         }
     }
 }

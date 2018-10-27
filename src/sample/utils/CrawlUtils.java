@@ -151,9 +151,6 @@ public class CrawlUtils {
     }
 
     public static String cleanHTMLContent(String content) {
-//        if(content.contains("LANBELLE LAN")){
-//            System.out.println("LANBELLE");
-//        }
         content = content.replace("<br />", "")
                 .replace("itemscope", "")
                 .replace("null", "")

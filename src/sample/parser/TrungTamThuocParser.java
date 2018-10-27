@@ -16,6 +16,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+import sample.jaxb.category.Category;
 import sample.jaxb.product.Product;
 
 /**
@@ -27,8 +28,32 @@ public class TrungTamThuocParser {
     public static Set<String> productURLs = null;
 //    public static int emptyProductCount = 0;
 
+    public static Category getCategory(String content) throws XMLStreamException {
+        XMLEvent event = null;
+
+        XMLEventReader reader = ParserUtils.getReader(content);
+        Iterator<XMLEvent> iterator = ParserUtils.fixWellForm(reader);
+
+        Category category = null;
+        while (iterator.hasNext()) {
+
+            event = iterator.next();
+
+            if (event.isStartElement()) {
+                StartElement se = event.asStartElement();
+                String seQName = se.getName().getLocalPart();
+
+                if (seQName.equals("span")) {
+
+                }
+            }
+        }
+        return category;
+    }
+
     public static Set<String> getProductLinks(String content)
             throws SQLException, NamingException, XMLStreamException {
+        TrungTamThuocParser.productURLs = null;
         XMLEvent event = null;
 
         XMLEventReader reader = ParserUtils.getReader(content);
@@ -131,6 +156,7 @@ public class TrungTamThuocParser {
                             event = iterator.next();
                             if (event.asCharacters().getData().trim().contains("Mã")) {
                                 productCode = event.asCharacters().getData().trim();
+                                productCode = productCode.replace("Mã :", "").trim();
                             }
                         }
                     }
@@ -139,19 +165,26 @@ public class TrungTamThuocParser {
                 if (seQName.equals("ins")) {    //get product price
                     event = iterator.next();
                     price = event.asCharacters().getData().trim();
+                    price = price.replace(",", "")
+                            .replace("vnđ", "")
+                            .replace("Giá :", "").trim();
+                    if (price.contains("Liên hệ")) {
+                        price = "0";
+                    }
                     break;
                 }
-            }
+            }            
         }
 
         Product product = null;
-//        if (!productName.isEmpty() && !productCode.isEmpty() && !imgURL.isEmpty()) {
-        product = new Product();
-        product.setCode(productCode);
-        product.setDescription(description);
-        product.setImageURL(imgURL);
-        product.setName(productName);
-//        }
+        if (!productName.isEmpty() && !productCode.isEmpty() && !imgURL.isEmpty()) {
+            product = new Product();
+            product.setCode(productCode);
+            product.setPrice(Integer.parseInt(price));
+            product.setDescription(description);
+            product.setImageURL(imgURL);
+            product.setName(productName);
+        }
 
         return product;
     }
