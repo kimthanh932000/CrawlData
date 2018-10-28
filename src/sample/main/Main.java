@@ -75,7 +75,8 @@ public class Main {
         }
     }
 
-    public static void crawlTrungTamThuoc() throws IOException, XMLStreamException, SQLException, NamingException {
+    public static void crawlTrungTamThuoc() 
+            throws IOException, XMLStreamException, SQLException, NamingException {
         String url = "https://trungtamthuoc.com/pr/my-pham-i17/";     //loss of some products while crawling
         //String url = "https://trungtamthuoc.com/pr/vitamin-va-khoang-chat-i51/";  //loss of some products while crawling
         String beginSign = "class=\"product-breadcroumb\"";
@@ -90,14 +91,15 @@ public class Main {
 
         Category category = new Category();
         category.setName("Mỹ Phẩm");
-        
+
         boolean result = CategoryDAO.addNewCategory(category);
 
         if (result) {
-            
+
+            //get category ID 
             int categoryID = CategoryDAO.getCategoryID(category, category.getName());
-                    
-            int count = 1;  //count product per category
+
+            int count = 0;  //count product
             
             //crawl product details from all pages
             for (int i = 1; i <= pageCount; i++) {
@@ -111,16 +113,16 @@ public class Main {
                 String cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
 
                 //get all products urls of a single page
-                Set<String> productLinks = new HashSet<>();
-                productLinks = TrungTamThuocParser.getProductLinks(cleanHTML);
+                Set<String> productURLs = new HashSet<>();
+                productURLs = TrungTamThuocParser.getProductURLs(cleanHTML);
 
-                if (productLinks.size() > 0) {
+                if (productURLs.size() > 0) {
 
                     ArrayList<Product> productList = new ArrayList<>();
 
-                    for (String productLink : productLinks) {
+                    for (String productURL : productURLs) {
                         //get a product detail url
-                        String productDetailsUrl = "https://trungtamthuoc.com" + productLink;
+                        String productDetailsUrl = "https://trungtamthuoc.com" + productURL;
 
                         //get html source of the product detail 
                         Crawler.getHTMLSource(productDetailsUrl, "class=\"product-breadcroumb\"", "class=\"row contentPro\"");
@@ -132,22 +134,17 @@ public class Main {
                         Product product = TrungTamThuocParser.getProductDetails(cleanHTML);
 
                         if (product != null) {
-                            productList.add(product);   //add product to list
-//                            System.out.println(count + ". ");
-//                            System.out.println("Name: " + product.getName());
-//                            System.out.println("Price: " + product.getPrice());
-//                            System.out.println("Description: " + product.getDescription());
-//                            System.out.println("Code: " + product.getCode());
-//                            System.out.println("ImgURL: " + product.getImageURL());
-//                            count++;
-                        }
-                        if(productLinks.size() > 0){
-                            for (Product p : productList) {
-//                                ProductDAO.addNewProduct(product);
-                            }
+                            productList.add(product);
                         }
                     }
+                    
+                    //save list of products to DB
+                    if (productList.size() > 0) {
+                        count += ProductDAO.addNewProduct(productList, categoryID);
+                        System.out.println("Saved " + count + " products to DB");
+                    }
                 }
+//                break;
             }
         }
     }

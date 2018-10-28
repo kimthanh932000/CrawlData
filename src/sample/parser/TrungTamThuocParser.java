@@ -80,7 +80,7 @@ public class TrungTamThuocParser {
         return category;
     }
 
-    public static Set<String> getProductLinks(String content)
+    public static Set<String> getProductURLs(String content)
             throws SQLException, NamingException, XMLStreamException {
         TrungTamThuocParser.productURLs = null;
         XMLEvent event = null;

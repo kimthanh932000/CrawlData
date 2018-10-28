@@ -5,7 +5,7 @@
         <group>
             <file>file:/F:/CrawlData/src/sample/parser/TrungTamThuocParser.java</file>
             <file>file:/F:/CrawlData/src/sample/dao/ProductDAO.java</file>
-            <file>file:/F:/CrawlData/src/sample/crawler/Crawler.java</file>
+            <file>file:/F:/CrawlData/src/sample/dao/CategoryDAO.java</file>
             <file>file:/F:/CrawlData/src/sample/main/Main.java</file>
         </group>
     </open-files>

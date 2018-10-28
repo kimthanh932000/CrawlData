@@ -55,8 +55,9 @@ public class CategoryDAO implements Serializable {
         try {
             con = DBUtils.makeConnection();
             if (con != null) {
-                String sql = "Select ID from Category where Name like '%" + categoryName + "'%";
+                String sql = "Select ID from Category where Name like ?";
                 stm = con.prepareStatement(sql);
+                stm.setString(1, "%" + categoryName + "%");
                 ResultSet rs = stm.executeQuery();
                 if (rs.next()) {
                     categoryID = rs.getInt("ID");
