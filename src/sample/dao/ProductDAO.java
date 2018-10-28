@@ -23,7 +23,7 @@ public class ProductDAO {
             throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement stm = null;
-        int count = 0;
+        int count[] = {};
         
         try {
             con = DBUtils.makeConnection();
@@ -45,12 +45,12 @@ public class ProductDAO {
                     stm.addBatch();
                     
                 }
-                int result[] = stm.executeBatch();
+                count = stm.executeBatch();
                 
-                for (int i : result) {
-                    if(i == 1)
-                        count++;
-                }
+//                for (int i : result) {
+//                    if(i == 1)
+//                        count++;
+//                }
                 con.commit();               
             }
         } finally {
@@ -61,6 +61,6 @@ public class ProductDAO {
                 con.close();
             }
         }
-        return count;
+        return count.length;
     }
 }

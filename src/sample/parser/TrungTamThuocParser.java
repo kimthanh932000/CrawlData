@@ -28,13 +28,12 @@ public class TrungTamThuocParser {
     public static Set<String> productURLs = null;
 //    public static int emptyProductCount = 0;
 
-    public static Category getCategory(String content) throws XMLStreamException {
+    public static String getCategory(String content) throws XMLStreamException {
         XMLEvent event = null;
 
         XMLEventReader reader = ParserUtils.getReader(content);
         Iterator<XMLEvent> iterator = ParserUtils.fixWellForm(reader);
 
-        Category category = null;
         int count = 0;
 
         while (iterator.hasNext()) {
@@ -45,7 +44,7 @@ public class TrungTamThuocParser {
                 StartElement se = event.asStartElement();
                 String seQName = se.getName().getLocalPart();
 
-                if (seQName.equals("a")) {
+                if (seQName.equals("i")) {
                     Iterator<Attribute> attributes = se.getAttributes();
                     Attribute attr = null;
 
@@ -54,7 +53,7 @@ public class TrungTamThuocParser {
                         String name = attr.getName().getLocalPart().trim();
                         String value = attr.getValue().trim();
 
-                        if (name.equals("href") && value.equals("/pr/my-pham-i17/")) {
+                        if (name.equals("class") && value.equals("fa fa-angle-double-right")) {
                             count++;
                             if (count == 2) {
                                 event = iterator.next();
@@ -66,9 +65,8 @@ public class TrungTamThuocParser {
 
                                     if (seQName.equals("span")) {
                                         event = iterator.next();
-                                        category = new Category();
-                                        category.setName(event.asCharacters().getData().trim());
-                                        System.out.println(category.getName());
+                                        String category = (event.asCharacters().getData().trim());
+                                        return category;
                                     }
                                 }
                             }
@@ -77,7 +75,7 @@ public class TrungTamThuocParser {
                 }
             }
         }
-        return category;
+        return null;
     }
 
     public static Set<String> getProductURLs(String content)

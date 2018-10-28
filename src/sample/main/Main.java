@@ -9,18 +9,14 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import javax.naming.NamingException;
 import javax.xml.stream.XMLStreamException;
 import sample.crawler.Crawler;
-import sample.crawler.VPPAHCrawler;
 import sample.dao.CategoryDAO;
 import sample.dao.ProductDAO;
-import sample.jaxb.category.Category;
 import sample.jaxb.product.Product;
 import sample.parser.TrungTamThuocParser;
-import sample.utils.ParserUtils;
 import sample.utils.CrawlUtils;
 
 /**
@@ -29,122 +25,94 @@ import sample.utils.CrawlUtils;
  */
 public class Main {
 
+    public static int count = 0;   //count product
+
     public static void main(String[] args)
             throws IOException, XMLStreamException, SQLException, NamingException {
         crawlTrungTamThuoc();
 
     }
 
-    public static void parseVPPAH() throws IOException, XMLStreamException {
-        String vppahUrl = "http://vanphongphamanhhang.com/van-phong-pham/But-bi-But-gel-But-de-ban/";
-        String beginSign = "id=\"category\"";
-        String endSign = "id=\"msgshow\"";
-
-        //get html content
-        VPPAHCrawler.getHTMLSource_getPageCount(vppahUrl, beginSign, endSign);
-
-        //get page count
-        int pageCount = VPPAHCrawler.pageCount;
-
-        String cleanHTML = "";
-        Category category = new Category();
-        List<Product> listProduct = new ArrayList<>();
-        Product product = new Product();
-
-        //crawl product from all pages
-        for (int i = 1; i <= pageCount; i++) {
-
-            //uri of each page
-            String uri = vppahUrl + "page-" + i + "/";
-
-            //crawl product page
-            VPPAHCrawler.getHTMLSource(uri, beginSign, endSign);
-
-            //clean html
-            cleanHTML = CrawlUtils.cleanHTMLContent(VPPAHCrawler.htmlSource);
-
-            //get category
-//            category = StAXParser.parseCategory(cleanHTML);
-//            if (category != null) {
-//                String categoryName = category.getCategoryName();
-//                if (!categoryName.isEmpty() || categoryName != null) {
-//                    CategoryDAO.addNewCategory(category);   //save category to DB
-//                }
-//            }
-            listProduct = ParserUtils.parseListProduct(cleanHTML);
-        }
-    }
-
-    public static void crawlTrungTamThuoc() 
+    public static void crawlTrungTamThuoc()
             throws IOException, XMLStreamException, SQLException, NamingException {
-        String url = "https://trungtamthuoc.com/pr/my-pham-i17/";     //loss of some products while crawling
-        //String url = "https://trungtamthuoc.com/pr/vitamin-va-khoang-chat-i51/";  //loss of some products while crawling
+        String urlMyPham = "https://trungtamthuoc.com/pr/my-pham-i17/";  
+        String urlHuongLieu = "https://trungtamthuoc.com/pr/huong-lieu-i19/";
+//        String urlVitamin = "https://trungtamthuoc.com/pr/vitamin-va-khoang-chat-i51/";  
         String beginSign = "class=\"product-breadcroumb\"";
         String endSign = "class=\"phantrang\"";
 
-        //get html content
-        Crawler.getHTMLSource_getPageCount(url, beginSign, endSign, "?page=");
+        ArrayList<String> listURL = new ArrayList<>();
+        listURL.add(urlMyPham);
+        listURL.add(urlHuongLieu);
+//        listURL.add(urlVitamin);
 
-        //get page count
-        int pageCount = Crawler.pageCount;
-        System.out.println("Page count " + pageCount);
-
-        Category category = new Category();
-        category.setName("Mỹ Phẩm");
-
-        boolean result = CategoryDAO.addNewCategory(category);
-
-        if (result) {
-
-            //get category ID 
-            int categoryID = CategoryDAO.getCategoryID(category, category.getName());
-
-            int count = 0;  //count product
+        for (String url : listURL) {
             
-            //crawl product details from all pages
-            for (int i = 1; i <= pageCount; i++) {
-                //uri of each page
-                String uri = url + "?page=" + i;
+            //get html content
+            Crawler.getHTMLSource_getPageCount(url, beginSign, endSign, "?page=");
 
-                //crawl product page
-                Crawler.getHTMLSource(uri, beginSign, endSign);
+            //clean html
+            String cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
 
-                //clean html source
-                String cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
+            //get page count
+            int pageCount = Crawler.pageCount;
+            System.out.println("Page count " + pageCount);
 
-                //get all products urls of a single page
-                Set<String> productURLs = new HashSet<>();
-                productURLs = TrungTamThuocParser.getProductURLs(cleanHTML);
+            String category = TrungTamThuocParser.getCategory(cleanHTML);
+            System.out.println("Category: " + category);
 
-                if (productURLs.size() > 0) {
+            boolean result = CategoryDAO.addNewCategory(category);  //save category to DB
 
-                    ArrayList<Product> productList = new ArrayList<>();
+            if (result) {
 
-                    for (String productURL : productURLs) {
-                        //get a product detail url
-                        String productDetailsUrl = "https://trungtamthuoc.com" + productURL;
+                //get category ID 
+                int categoryID = CategoryDAO.getCategoryID(category);
 
-                        //get html source of the product detail 
-                        Crawler.getHTMLSource(productDetailsUrl, "class=\"product-breadcroumb\"", "class=\"row contentPro\"");
+                //crawl product details from all pages
+                for (int i = 1; i <= pageCount; i++) {
+                    //uri of each page
+                    String uriPage = url + "?page=" + i;
 
-                        //clean html content
-                        cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
+                    //crawl product page
+                    Crawler.getHTMLSource(uriPage, beginSign, endSign);
 
-                        //create an instance of Product
-                        Product product = TrungTamThuocParser.getProductDetails(cleanHTML);
+                    //clean html source
+                    cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
 
-                        if (product != null) {
-                            productList.add(product);
+                    //get all products urls of a single page
+                    Set<String> productURLs = new HashSet<>();
+                    productURLs = TrungTamThuocParser.getProductURLs(cleanHTML);
+
+                    if (productURLs.size() > 0) {
+
+                        ArrayList<Product> productList = new ArrayList<>();
+
+                        for (String productURL : productURLs) {
+                            //get a product detail url
+                            String productDetailsUrl = "https://trungtamthuoc.com" + productURL;
+
+                            //get html source of the product detail 
+                            Crawler.getHTMLSource(productDetailsUrl, "class=\"product-breadcroumb\"", "class=\"row contentPro\"");
+
+                            //clean html content
+                            cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
+
+                            //create an instance of Product
+                            Product product = TrungTamThuocParser.getProductDetails(cleanHTML);
+
+                            if (product != null) {
+                                productList.add(product);
+                            }
+                        }
+
+                        //save list of products to DB
+                        if (productList.size() > 0) {
+                            count += ProductDAO.addNewProduct(productList, categoryID);
+                            System.out.println("Saved " + count + " products to DB");
                         }
                     }
-                    
-                    //save list of products to DB
-                    if (productList.size() > 0) {
-                        count += ProductDAO.addNewProduct(productList, categoryID);
-                        System.out.println("Saved " + count + " products to DB");
-                    }
-                }
 //                break;
+                }
             }
         }
     }

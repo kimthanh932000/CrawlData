@@ -12,7 +12,6 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 
 /**
  *
@@ -64,6 +63,7 @@ public class Crawler {
     }
 
     public static void getPageCount(String content, String key) {
+        pageCount = 0;
         if (content.contains(key)) {
 
             int beginPage = 0;

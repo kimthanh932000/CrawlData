@@ -12,7 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.naming.NamingException;
 import sample.utils.DBUtils;
-import sample.jaxb.category.Category;
 
 /**
  *
@@ -20,7 +19,7 @@ import sample.jaxb.category.Category;
  */
 public class CategoryDAO implements Serializable {
 
-    public static boolean addNewCategory(Category category)
+    public static boolean addNewCategory(String category)
             throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement stm = null;
@@ -29,7 +28,7 @@ public class CategoryDAO implements Serializable {
             if (con != null) {
                 String sql = "Insert into Category(Name) values(?)";
                 stm = con.prepareStatement(sql);
-                stm.setString(1, category.getName());
+                stm.setString(1, category);
                 int row = stm.executeUpdate();
                 if (row > 0) {
                     return true;
@@ -46,7 +45,7 @@ public class CategoryDAO implements Serializable {
         return false;
     }
 
-    public static int getCategoryID(Category category, String categoryName)
+    public static int getCategoryID(String categoryName)
             throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement stm = null;
