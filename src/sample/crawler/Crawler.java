@@ -38,6 +38,7 @@ public class Crawler {
             String inputLine = null;
 
             while ((inputLine = br.readLine()) != null) {
+//                System.out.println(inputLine);
                 if (inputLine.contains(beginSign)) {
                     if (count == 0) {
                         isInside = true;
@@ -46,7 +47,7 @@ public class Crawler {
                 }
                 if (inputLine.contains(endSign)) {
                     isInside = false;
-                    break;
+//                    break;
                 }
                 if (isInside) {
                     htmlSource = htmlSource + inputLine.trim() + "\n";
@@ -97,6 +98,7 @@ public class Crawler {
         int count = 0;
         InputStream is = null;
         BufferedReader br = null;
+        
         try {
             URL url = new URL(uri);
             URLConnection con = url.openConnection();
@@ -106,6 +108,7 @@ public class Crawler {
             String inputLine = null;
 
             while ((inputLine = br.readLine()) != null) {
+
                 if (inputLine.contains(key)) {
                     getPageCount(inputLine, key);
                 }

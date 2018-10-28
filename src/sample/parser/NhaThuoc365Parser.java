@@ -5,7 +5,6 @@
  */
 package sample.parser;
 
-import sample.utils.ParserUtils;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -17,16 +16,18 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import sample.jaxb.product.Product;
+import sample.utils.ParserUtils;
 
 /**
  *
  * @author Administrator
  */
-public class TrungTamThuocParser{
+public class NhaThuoc365Parser {
 
     public static Set<String> productURLs = null;
 
-//        public static String getCategory(String url, String key){
+//    public static String getCategory(String url){
+//        String key = "https://nhathuoc365.vn/";
 //        int index = url.indexOf(key);
 //        int pos = url.lastIndexOf("-");
 //        String category = url.substring(index + key.length(), pos);
@@ -34,14 +35,11 @@ public class TrungTamThuocParser{
 //                
 //        return category;
 //    }
-    
     public static String getCategory(String content) throws XMLStreamException {
         XMLEvent event = null;
 
         XMLEventReader reader = ParserUtils.getReader(content);
         Iterator<XMLEvent> iterator = ParserUtils.fixWellForm(reader);
-
-        int count = 0;
 
         while (iterator.hasNext()) {
 
@@ -51,7 +49,7 @@ public class TrungTamThuocParser{
                 StartElement se = event.asStartElement();
                 String seQName = se.getName().getLocalPart();
 
-                if (seQName.equals("i")) {
+                if (seQName.equals("span")) {
                     Iterator<Attribute> attributes = se.getAttributes();
                     Attribute attr = null;
 
@@ -60,23 +58,10 @@ public class TrungTamThuocParser{
                         String name = attr.getName().getLocalPart().trim();
                         String value = attr.getValue().trim();
 
-                        if (name.equals("class") && value.equals("fa fa-angle-double-right")) {
-                            count++;
-                            if (count == 2) {
-                                event = iterator.next();
-                                event = iterator.next();
-                                event = iterator.next();
-                                if (event.isStartElement()) {
-                                    se = event.asStartElement();
-                                    seQName = se.getName().getLocalPart();
-
-                                    if (seQName.equals("span")) {
-                                        event = iterator.next();
-                                        String category = (event.asCharacters().getData().trim());
-                                        return category;
-                                    }
-                                }
-                            }
+                        if (name.equals("itemprop") && value.equals("title")) {
+                            event = iterator.next();
+                            String category = event.asCharacters().getData().trim();
+                            return category;
                         }
                     }
                 }
@@ -111,13 +96,15 @@ public class TrungTamThuocParser{
                         String name = attr.getName().getLocalPart().trim();
                         String value = attr.getValue().trim();
 
-                        if (name.equals("href") && value.contains("/p/")) {
-                            url = value;
-                            if (productURLs == null) {
-                                productURLs = new HashSet<>();
+                        if (name.equals("href")) {
+                            value = attr.getValue().trim();
+                            if (value.contains("https://nhathuoc365.vn/")) {
+                                if (productURLs == null) {
+                                    productURLs = new HashSet<>();
+                                }
+                                productURLs.add(attr.getValue().trim());
+                                break;
                             }
-                            productURLs.add(url);
-                            break;
                         }
                     }
                 }
@@ -126,7 +113,7 @@ public class TrungTamThuocParser{
         return productURLs;
     }
 
-    public static Product getProductDetails(String content) 
+    public static Product getProductDetails(String content)
             throws XMLStreamException {
         XMLEvent event = null;
 

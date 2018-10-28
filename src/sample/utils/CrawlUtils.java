@@ -5,16 +5,9 @@
  */
 package sample.utils;
 
-import com.sun.xml.internal.stream.events.EndElementEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.EndElement;
-import javax.xml.stream.events.XMLEvent;
 
 /**
  *
@@ -160,6 +153,7 @@ public class CrawlUtils {
                 .replace("&", "&#38;")
                 .replace("/>", ">")
                 .replace("LANBELLE LAN'STAMANU CREAM-kem dưỡng da chiết xuất từ tự nhiên", "")
+                .replace("< ", "")
                 .replaceAll("(?m)^\\s", "");
         content = "<root>" + "\n" + content + "</root>";
         return content;
