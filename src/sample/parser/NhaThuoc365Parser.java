@@ -26,15 +26,6 @@ public class NhaThuoc365Parser {
 
     public static Set<String> productURLs = null;
 
-//    public static String getCategory(String url){
-//        String key = "https://nhathuoc365.vn/";
-//        int index = url.indexOf(key);
-//        int pos = url.lastIndexOf("-");
-//        String category = url.substring(index + key.length(), pos);
-//        category = category.replace("-", " ").trim();
-//                
-//        return category;
-//    }
     public static String getCategory(String content) throws XMLStreamException {
         XMLEvent event = null;
 
@@ -119,10 +110,7 @@ public class NhaThuoc365Parser {
 
         XMLEventReader reader = ParserUtils.getReader(content);
         Iterator<XMLEvent> iterator = ParserUtils.fixWellForm(reader);
-//        Iterator<XMLEvent> iterator = ParserUtils.fixWellFormPoductDetails(reader);
-//        while(iterator.hasNext()){
-//            System.out.println(iterator.next());
-//        }
+
         String imgURL = "";
         String productName = "";
         String price = "";

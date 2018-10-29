@@ -47,10 +47,6 @@ public class ProductDAO {
                 }
                 count = stm.executeBatch();
                 
-//                for (int i : result) {
-//                    if(i == 1)
-//                        count++;
-//                }
                 con.commit();               
             }
         } finally {

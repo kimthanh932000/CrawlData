@@ -83,13 +83,11 @@ public class ParserUtils {
             XMLEvent event = null;
             try {
                 event = reader.nextEvent();
-//                System.out.println(event);
                 if (event.isEndDocument()) {
                     break;
                 }
             } catch (XMLStreamException exception) {
                 String msg = exception.getMessage();
-//                System.out.println(msg);
                 String msgErrorString = "The element type \"";
 
                 if (msg.contains(msgErrorString)) {
@@ -121,9 +119,7 @@ public class ParserUtils {
                 }
             }
         }
-//        while(IEvents.iterator().hasNext()){
-//            System.out.println(IEvents.iterator().next());
-//        }
+
         return IEvents.iterator();
     }
 

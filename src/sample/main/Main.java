@@ -30,9 +30,8 @@ public class Main {
 
     public static void main(String[] args)
             throws IOException, XMLStreamException, SQLException, NamingException {
-//        crawlTrungTamThuoc();
+        crawlTrungTamThuoc();
         crawlNhaThuoc365();
-
     }
 
     public static void crawlTrungTamThuoc()
@@ -120,8 +119,6 @@ public class Main {
 
         String urlThucPhamChucNang = "https://nhathuoc365.vn/thuc-pham-chuc-nang-p1";
         String urlTinhDau = "https://nhathuoc365.vn/tinh-dau-p2";
-//        String beginSign = "class=\"breadcrumbs\"";
-//        String endSign = "class=\"clearfix\"";
 
         ArrayList<String> listURL = new ArrayList<>();
         listURL.add(urlThucPhamChucNang);
@@ -162,17 +159,11 @@ public class Main {
 
                     //clean html source
                     cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
-//                    System.out.println(cleanHTML);
 
                     //get all products urls of a single page
                     Set<String> productURLs = new HashSet<>();
                     productURLs = NhaThuoc365Parser.getProductURLs(cleanHTML);
-//                    int num = 1;
-//                    for (String productURL : productURLs) {
-//                        System.out.println(num + ". " + productURL);
-//                        num++;
-//                    }
-//                    break;
+
                     if (productURLs.size() > 0) {
 
                         ArrayList<Product> productList = new ArrayList<>();
