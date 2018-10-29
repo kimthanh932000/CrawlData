@@ -18,7 +18,6 @@ import sample.dao.ProductDAO;
 import sample.jaxb.product.Product;
 import sample.parser.NhaThuoc365Parser;
 import sample.parser.TrungTamThuocParser;
-import sample.utils.CrawlUtils;
 
 /**
  *
@@ -51,7 +50,7 @@ public class Main {
             Crawler.getHTMLSource_getPageCount(url, beginSign, endSign, "?page=");
 
             //clean html
-            String cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
+            String cleanHTML = Crawler.cleanHTMLContent(Crawler.htmlSource);
 
             //get page count
             int pageCount = Crawler.pageCount;
@@ -76,7 +75,7 @@ public class Main {
                     Crawler.getHTMLSource(uriPage, beginSign, endSign);
 
                     //clean html source
-                    cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
+                    cleanHTML = Crawler.cleanHTMLContent(Crawler.htmlSource);
 
                     //get all products urls of a single page
                     Set<String> productURLs = new HashSet<>();
@@ -93,7 +92,7 @@ public class Main {
                             Crawler.getHTMLSource(productDetailsUrl, "class=\"product-breadcroumb\"", "class=\"row contentPro\"");
 
                             //clean html content
-                            cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
+                            cleanHTML = Crawler.cleanHTMLContent(Crawler.htmlSource);
 
                             //create an instance of Product
                             Product product = TrungTamThuocParser.getProductDetails(cleanHTML);
@@ -132,7 +131,7 @@ public class Main {
 
             //get html content contains category
             Crawler.getHTMLSource(url, "class=\"breadcrumbs\"", "id=\"aside\"");
-            cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
+            cleanHTML = Crawler.cleanHTMLContent(Crawler.htmlSource);
 
             //get page count
             int pageCount = Crawler.pageCount;
@@ -158,7 +157,7 @@ public class Main {
                     Crawler.getHTMLSource(uriPage, "id=\"content\"", "<div class=\"clearfix\">");
 
                     //clean html source
-                    cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
+                    cleanHTML = Crawler.cleanHTMLContent(Crawler.htmlSource);
 
                     //get all products urls of a single page
                     Set<String> productURLs = new HashSet<>();
@@ -177,14 +176,13 @@ public class Main {
                             Crawler.getHTMLSource(productURL, "id=\"detail-product\"", "id=\"same_products\"");
 
                             //clean html content
-                            cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
+                            cleanHTML = Crawler.cleanHTMLContent(Crawler.htmlSource);
 
                             //create an instance of Product
                             Product product = NhaThuoc365Parser.getProductDetails(cleanHTML);
                             if (product != null) {
                                 productList.add(product);
                             }
-//                            break;
                         }
 
                         //save list of products to DB

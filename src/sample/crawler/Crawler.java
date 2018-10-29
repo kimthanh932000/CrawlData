@@ -134,4 +134,23 @@ public class Crawler {
             }
         }
     }
+    public static String cleanHTMLContent(String content) {
+        content = content.replace("<br />", "")
+                .replace("<br>", "")
+                .replace("itemscope", "")
+                .replace("null", "")
+                .replace("&#38;&nbsp;", "")
+                .replace("&nbsp;&nbsp;", "")
+                .replace("\t", "")
+                .replace("&", "&#38;")
+                .replace("/>", ">")
+                .replace("LANBELLE LAN'STAMANU CREAM-kem dưỡng da chiết xuất từ tự nhiên", "")
+                .replace("< ", "")
+                .replace("fb:share:layout=\"button_count\"", "")
+                .replace("g:plusone:size=\"medium\"", "")
+                .replace("<col style=\"text-align: justify;\" width=\"406\" >", "")
+                .replaceAll("(?m)^\\s", "");
+        content = "<root>" + "\n" + content + "</root>";
+        return content;
+    }
 }
