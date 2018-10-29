@@ -25,6 +25,57 @@ import javax.xml.transform.stream.StreamSource;
  */
 public class ParserUtils {
 
+    public static Iterator<XMLEvent> fixWellFormPoductDetails(XMLEventReader reader) {
+        ArrayList<XMLEvent> IEvents = new ArrayList<>();
+        int endTagMarker = 0;
+        while (endTagMarker >= 0) {
+            XMLEvent event = null;
+            try {
+                event = reader.nextEvent();
+//                System.out.println(event);
+                if (event.isEndDocument()) {
+                    break;
+                }
+            } catch (XMLStreamException exception) {
+                String msg = exception.getMessage();
+//                System.out.println(msg);
+                String msgErrorString = "The element type \"";
+
+                if (msg.contains(msgErrorString)) {
+                    String missingTagName = msg.substring(msg.indexOf(msgErrorString) + msgErrorString.length(), msg.indexOf("\" must be terminated"));
+                    EndElement missingTag = new EndElementEvent(new QName(missingTagName));
+                    event = missingTag;
+                }
+                msgErrorString = "Element type \"";
+
+                if (msg.contains(msgErrorString)) {
+                    String missingTagName = msg.substring(msg.indexOf(msgErrorString) + msgErrorString.length(), msg.indexOf("\" must be followed"));
+                    EndElement missingTag = new EndElementEvent(new QName(missingTagName));
+
+                    event = missingTag;
+                }
+
+            } catch (NullPointerException exception) {
+                break;
+            }
+            if (event != null) {
+                if (event.isStartElement()) {
+                    endTagMarker++;
+                } else if (event.isEndElement()) {
+                    endTagMarker--;
+
+                }
+                if (endTagMarker >= 0) {
+                    IEvents.add(event);
+                }
+            }
+        }
+//        while(IEvents.iterator().hasNext()){
+//            System.out.println(IEvents.iterator().next());
+//        }
+        return IEvents.iterator();
+    }
+
     public static Iterator<XMLEvent> fixWellForm(XMLEventReader reader) {
         ArrayList<XMLEvent> IEvents = new ArrayList<>();
         int endTagMarker = 0;
@@ -32,8 +83,10 @@ public class ParserUtils {
             XMLEvent event = null;
             try {
                 event = reader.nextEvent();
-                if(event.isEndDocument())
+//                System.out.println(event);
+                if (event.isEndDocument()) {
                     break;
+                }
             } catch (XMLStreamException exception) {
                 String msg = exception.getMessage();
 //                System.out.println(msg);

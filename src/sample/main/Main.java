@@ -125,7 +125,7 @@ public class Main {
 
         ArrayList<String> listURL = new ArrayList<>();
         listURL.add(urlThucPhamChucNang);
-//        listURL.add(urlTinhDau);
+        listURL.add(urlTinhDau);
 
         for (String url : listURL) {
             String cleanHTML = "";
@@ -163,44 +163,46 @@ public class Main {
                     //clean html source
                     cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
 //                    System.out.println(cleanHTML);
-                    
+
                     //get all products urls of a single page
                     Set<String> productURLs = new HashSet<>();
                     productURLs = NhaThuoc365Parser.getProductURLs(cleanHTML);
-                    int num = 1;
-                    for (String productURL : productURLs) {
-                        System.out.println(num + ". " + productURL);
-                        num++;
-                    }
-                    break;
-//                    if (productURLs.size() > 0) {
-//
-//                        ArrayList<Product> productList = new ArrayList<>();
-//
-//                        for (String productURL : productURLs) {
-//                            //get a product detail url
-//                            String productDetailsUrl = "https://trungtamthuoc.com" + productURL;
-//
-//                            //get html source of the product detail 
-//                            Crawler.getHTMLSource(productDetailsUrl, "class=\"product-breadcroumb\"", "class=\"row contentPro\"");
-//
-//                            //clean html content
-//                            cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
-//
-//                            //create an instance of Product
-//                            Product product = NhaThuoc365Parser.getProductDetails(cleanHTML);
-//
-//                            if (product != null) {
-//                                productList.add(product);
-//                            }
-//                        }
-//
-//                        //save list of products to DB
-//                        if (productList.size() > 0) {
-//                            count += ProductDAO.addNewProduct(productList, categoryID);
-//                            System.out.println("Saved " + count + " products to DB");
-//                        }
+//                    int num = 1;
+//                    for (String productURL : productURLs) {
+//                        System.out.println(num + ". " + productURL);
+//                        num++;
 //                    }
+//                    break;
+                    if (productURLs.size() > 0) {
+
+                        ArrayList<Product> productList = new ArrayList<>();
+
+                        for (String productURL : productURLs) {
+                            if(count == 140 && productList.size() == 6){
+                                System.out.println("Reach 80 products");
+                            }
+
+                            //get html source of the product detail 
+                            Crawler.getHTMLSource(productURL, "id=\"detail-product\"", "id=\"same_products\"");
+
+                            //clean html content
+                            cleanHTML = CrawlUtils.cleanHTMLContent(Crawler.htmlSource);
+
+                            //create an instance of Product
+                            Product product = NhaThuoc365Parser.getProductDetails(cleanHTML);
+                            if (product != null) {
+                                productList.add(product);
+                            }
+//                            break;
+                        }
+
+                        //save list of products to DB
+                        if (productList.size() > 0) {
+                            count += ProductDAO.addNewProduct(productList, categoryID);
+                            System.out.println("Saved " + count + " products to DB");
+                        }
+                    }
+//                    break;
                 }
             }
         }

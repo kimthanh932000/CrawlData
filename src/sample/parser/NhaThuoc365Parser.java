@@ -72,7 +72,7 @@ public class NhaThuoc365Parser {
 
     public static Set<String> getProductURLs(String content)
             throws SQLException, NamingException, XMLStreamException {
-        TrungTamThuocParser.productURLs = null;
+        NhaThuoc365Parser.productURLs = null;
         XMLEvent event = null;
 
         XMLEventReader reader = ParserUtils.getReader(content);
@@ -119,17 +119,22 @@ public class NhaThuoc365Parser {
 
         XMLEventReader reader = ParserUtils.getReader(content);
         Iterator<XMLEvent> iterator = ParserUtils.fixWellForm(reader);
-
+//        Iterator<XMLEvent> iterator = ParserUtils.fixWellFormPoductDetails(reader);
+//        while(iterator.hasNext()){
+//            System.out.println(iterator.next());
+//        }
         String imgURL = "";
         String productName = "";
         String price = "";
         String description = "";
         String productCode = "";
 
+        int count = 0;
+
         while (iterator.hasNext()) {
 
             event = iterator.next();
-
+//            System.out.println(event);
             if (event.isStartElement()) {
                 StartElement se = event.asStartElement();
                 String seQName = se.getName().getLocalPart();
@@ -143,58 +148,69 @@ public class NhaThuoc365Parser {
                         String name = attr.getName().getLocalPart().trim();
                         String value = attr.getValue().trim();
 
-                        if (name.equals("src") && value.contains("/upload/image/san-pham/")) {
-                            imgURL = "https://trungtamthuoc.com" + value;
-                        }
-                    }
-                }
-
-                if (seQName.equals("h1")) {    //get product name
-                    Iterator<Attribute> attributes = se.getAttributes();
-                    Attribute attr = null;
-
-                    while (attributes.hasNext()) {
-                        attr = attributes.next();
-                        String name = attr.getName().getLocalPart().trim();
-                        String value = attr.getValue().trim();
-
-                        if (name.equals("id") && value.contains("ten-san-pham")) {
-                            event = iterator.next();
-                            productName = event.asCharacters().getData().trim();
-                        }
-                    }
-                }
-
-                if (seQName.equals("h2")) {    //get product code
-                    Iterator<Attribute> attributes = se.getAttributes();
-                    Attribute attr = null;
-
-                    while (attributes.hasNext()) {
-                        attr = attributes.next();
-                        String name = attr.getName().getLocalPart().trim();
-                        String value = attr.getValue().trim();
-
-                        if (name.equals("class") && value.contains("product-code")) {
-                            event = iterator.next();
-                            if (event.asCharacters().getData().trim().contains("Mã")) {
-                                productCode = event.asCharacters().getData().trim();
-                                productCode = productCode.replace("Mã :", "").trim();
+                        if (name.equals("src") && value.contains("https://nhathuoc365.vn/images/products/")) {
+                            if (imgURL.isEmpty()) {
+                                imgURL = value;
+                                count++;
                             }
                         }
                     }
                 }
 
-                if (seQName.equals("ins")) {    //get product price
+                if (seQName.equals("h1")) {    //get product name
                     event = iterator.next();
-                    price = event.asCharacters().getData().trim();
-                    price = price.replace(",", "")
-                            .replace("vnđ", "")
-                            .replace("Giá :", "").trim();
-                    if (price.contains("Liên hệ")) {
-                        price = "0";
+                    if (event.isCharacters()) {
+                        productName = event.asCharacters().getData().trim();
+                        count++;
                     }
-                    break;
                 }
+
+                if (seQName.equals("p")) {    //get product code
+                    Iterator<Attribute> attributes = se.getAttributes();
+                    Attribute attr = null;
+
+                    while (attributes.hasNext()) {
+                        attr = attributes.next();
+                        String name = attr.getName().getLocalPart().trim();
+                        String value = attr.getValue().trim();
+
+                        if (name.equals("class") && value.contains("masanpham")) {
+                            event = iterator.next();
+                            event = iterator.next();
+                            event = iterator.next();
+                            if (event.isCharacters()) {
+                                productCode = event.asCharacters().getData().trim();
+                                count++;
+                            }
+                        }
+                    }
+                }
+
+                if (seQName.equals("div")) {    //get product price
+                    Iterator<Attribute> attributes = se.getAttributes();
+                    Attribute attr = null;
+
+                    while (attributes.hasNext()) {
+
+                        attr = attributes.next();
+                        String name = attr.getName().getLocalPart().trim();
+                        String value = attr.getValue().trim();
+
+                        if (name.equals("class") && value.contains("price")) {
+                            event = iterator.next();
+                            if (event.isCharacters()) {
+                                price = event.asCharacters().getData()
+                                        .replace("đ", "")
+                                        .replace(".", "")
+                                        .trim();
+                                count++;
+                            }
+                        }
+                    }
+                }
+            }
+            if (count == 4) {     //break loop after get name, price, code, imgURL
+                break;
             }
         }
 
