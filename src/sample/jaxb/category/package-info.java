@@ -5,5 +5,11 @@
 // Generated on: 2018.10.26 at 10:50:24 PM ICT 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "www.kimthanh.com/schema/category", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "www.kimthanh.com/schema/category", 
+                                    elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
+                                    xmlns = {@XmlNs(prefix="cate",
+                                              namespaceURI="www.kimthanh.com/schema/category")})
 package sample.jaxb.category;
+
+import javax.xml.bind.annotation.XmlNs;
+

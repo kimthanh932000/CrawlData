@@ -17,7 +17,7 @@ import java.net.URLConnection;
  *
  * @author Administrator
  */
-public class Crawler {
+public class HTMLCrawler {
 
     public static String htmlSource = "";
     public static int pageCount = 0;

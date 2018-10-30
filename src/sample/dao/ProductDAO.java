@@ -8,7 +8,7 @@ package sample.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.List;
 import javax.naming.NamingException;
 import sample.jaxb.product.Product;
 import sample.utils.DBUtils;
@@ -19,7 +19,7 @@ import sample.utils.DBUtils;
  */
 public class ProductDAO {
 
-    public static int addNewProduct(ArrayList<Product> list, int cateID)
+    public static int addNewProduct(List<Product> list)
             throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement stm = null;
@@ -41,7 +41,7 @@ public class ProductDAO {
                     stm.setString(3, product.getDescription());
                     stm.setDouble(4, product.getPrice());
                     stm.setString(5, product.getImageURL());
-                    stm.setInt(6, cateID);
+                    stm.setInt(6, product.getCategoryID().intValue());
                     stm.addBatch();
                     
                 }
