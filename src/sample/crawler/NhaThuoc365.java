@@ -27,7 +27,7 @@ import sample.parser.NhaThuoc365Parser;
  */
 public class NhaThuoc365 {
 
-    public static List<Product> Crawler()
+    public static void Crawler()
             throws IOException, XMLStreamException, SQLException, NamingException {
 
         String urlThucPhamChucNang = "https://nhathuoc365.vn/thuc-pham-chuc-nang-p1";
@@ -41,6 +41,7 @@ public class NhaThuoc365 {
         Products listAllProducts = new Products();
 
         for (String url : listURL) {
+            System.out.println("Crawling from " + url);
             String cleanHTML = "";
 
             //get html content contains page count
@@ -67,6 +68,7 @@ public class NhaThuoc365 {
 
                 //crawl product details from all pages
                 for (int i = 1; i <= pageCount; i++) {
+                    System.out.println("Crawling products from page " + i + "...");
                     //uri of each page
                     String uriPage = url + "/trang-" + i;
 
@@ -82,7 +84,7 @@ public class NhaThuoc365 {
 
                     if (productURLs.size() > 0) {
 
-                        ArrayList<Product> productList = new ArrayList<>();
+                        ArrayList<Product> listProductPerPage = new ArrayList<>();
 
                         for (String productURL : productURLs) {
 
@@ -96,21 +98,21 @@ public class NhaThuoc365 {
                             Product product = NhaThuoc365Parser.getProductDetails(cleanHTML);
 
                             if (product != null) {
-//                                productList.add(product);
+                                listProductPerPage.add(product);
                                 product.setCategoryID(BigInteger.valueOf(categoryID));
-                                listAllProducts.getProduct().add(product);
+//                                listAllProducts.getProduct().add(product);
                             }
                         }
 
                         //save list of products to DB
-//                        if (productList.size() > 0) {
-//                            count += ProductDAO.addNewProduct(productList);
-//                            System.out.println("Saved " + count + " products to DB");
-//                        }
+                        if (listProductPerPage.size() > 0) {
+                            count += ProductDAO.addNewProduct(listProductPerPage);
+                            System.out.println("Saved " + count + " products to DB");
+                        }
                     }
                 }
             }
         }
-        return listAllProducts.getProduct();
+//        return listAllProducts.getProduct();
     }
 }

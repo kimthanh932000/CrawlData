@@ -28,7 +28,7 @@ import sample.parser.TrungTamThuocParser;
  */
 public class TrungTamThuoc {
 
-    public static List<Product> Crawler()
+    public static void Crawler()
             throws IOException, XMLStreamException, SQLException, NamingException, JAXBException {
         String urlMyPham = "https://trungtamthuoc.com/pr/my-pham-i17/";
         String urlHuongLieu = "https://trungtamthuoc.com/pr/huong-lieu-i19/";
@@ -45,7 +45,7 @@ public class TrungTamThuoc {
 
         //loop through 2 urls 
         for (String url : listURL) {
-
+            System.out.println("Crawling from " + url);
             //get html content
             HTMLCrawler.getHTMLSource_getPageCount(url, beginSign, endSign, "?page=");
 
@@ -54,10 +54,10 @@ public class TrungTamThuoc {
 
             //get page count
             int pageCount = HTMLCrawler.pageCount;
-//            System.out.println("Page count " + pageCount);
+            System.out.println("Page count " + pageCount);
 
             String category = TrungTamThuocParser.getCategory(cleanHTML);
-//            System.out.println("Category: " + category);
+            System.out.println("Category: " + category);
 
             boolean result = CategoryDAO.addNewCategory(category);  //save category to DB
 
@@ -68,6 +68,7 @@ public class TrungTamThuoc {
 
                 //crawl product details from all pages
                 for (int i = 1; i <= pageCount; i++) {
+                    System.out.println("Crawling products from page " + i + "...");
                     //uri of each page
                     String uriPage = url + "?page=" + i;
 
@@ -100,20 +101,21 @@ public class TrungTamThuoc {
 
                             if (product != null) {
                                 product.setCategoryID(BigInteger.valueOf(categoryID));
-//                                listProductPerPage.add(product);
-                                listAllProducts.getProduct().add(product);
+                                listProductPerPage.add(product);
+//                                listAllProducts.getProduct().add(product);
                             }
                         }
-
+//                        System.out.println("Finished crawling " + listProductPerPage.size() + " products from page " + i);
                         //save all products per page to DB
-//                        if (listProductPerPage.size() > 0) {
-//                            count += ProductDAO.addNewProduct(listProductPerPage);
-//                            System.out.println("Saved " + count + " products to DB");
-//                        }
+                        if (listProductPerPage.size() > 0) {
+                            count += ProductDAO.addNewProduct(listProductPerPage);
+                            System.out.println("Saved " + count + " products to DB");
+                        }
                     }
                 }
             }
         }
-        return listAllProducts.getProduct();
+//        System.out.println("Total products crawled: " + listAllProducts.getProduct().size());
+//        return listAllProducts.getProduct().size();
     }
 }
